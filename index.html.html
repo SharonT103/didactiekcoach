@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vakdidactiek Coach</title>
+  <style>
+    :root {
+      --bg1: #ede9fe;
+      --bg2: #ffffff;
+      --bg3: #e0f2fe;
+      --text: #1e293b;
+      --muted: #64748b;
+      --card: rgba(255,255,255,0.92);
+      --border: #e2e8f0;
+      --shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
+      --radius: 24px;
+      --pink: linear-gradient(135deg, #d946ef, #ec4899);
+      --sky: linear-gradient(135deg, #0ea5e9, #06b6d4);
+      --emerald: linear-gradient(135deg, #10b981, #14b8a6);
+      --amber: linear-gradient(135deg, #f59e0b, #f97316);
+      --violet: linear-gradient(135deg, #8b5cf6, #6366f1);
+      --rose: linear-gradient(135deg, #f43f5e, #ef4444);
+      --slate: linear-gradient(135deg, #475569, #0f172a);
+      --lime: linear-gradient(135deg, #84cc16, #16a34a);
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --secondary: #f1f5f9;
+      --secondary-hover: #e2e8f0;
+      --success-bg: #ecfdf5;
+      --success-border: #a7f3d0;
+      --warn-bg: #fffbeb;
+      --warn-border: #fde68a;
+      --danger-bg: #fff1f2;
+      --danger-border: #fecdd3;
+      --selected-bg: #eff6ff;
+      --selected-border: #93c5fd;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color: var(--text); }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2) 45%, var(--bg3));
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .hero { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.85); color: #334155; padding: 8px 12px; border-radius: 999px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); font-size: 14px; font-weight: 600; }
+    h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin: 10px 0 8px; line-height: 1.1; }
+    .lead { max-width: 760px; color: var(--muted); font-size: 1rem; line-height: 1.65; }
+    .grid { display: grid; gap: 20px; }
+    .grid-home { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .grid-main { grid-template-columns: 1.45fr 0.95fr; align-items: start; }
+    .grid-result { grid-template-columns: 1.1fr 0.9fr; align-items: start; }
+    @media (max-width: 980px) { .grid-main, .grid-result { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border: 1px solid rgba(255,255,255,0.7); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .card-header { padding: 24px 24px 8px; }
+    .card-content { padding: 16px 24px 24px; }
+    .icon-box { width: 48px; height: 48px; border-radius: 16px; color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; box-shadow: 0 10px 22px rgba(0,0,0,.12); }
+    .theme-card .title { font-size: 1.5rem; font-weight: 800; margin: 10px 0 8px; }
+    .muted { color: var(--muted); }
+    .small { font-size: .95rem; }
+    .tiny { font-size: .85rem; }
+    .pill { display:inline-block; background:#f8fafc; padding:10px 12px; border-radius:16px; }
+    .button-row { display:flex; flex-wrap:wrap; gap:12px; margin-top: 18px; }
+    button { border: 0; cursor: pointer; font: inherit; }
+    .btn { height: 44px; padding: 0 16px; border-radius: 16px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: .18s ease; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-secondary { background: var(--secondary); color: #0f172a; }
+    .btn-secondary:hover { background: var(--secondary-hover); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none !important; }
+    .summary-box { display:flex; gap:12px; align-items:center; flex-wrap: wrap; }
+    .score-badge { display:inline-flex; align-items:center; gap:8px; background:#f1f5f9; padding:8px 12px; border-radius:999px; font-size:14px; font-weight:700; color:#334155; }
+    .progress-wrap { margin-top: 8px; }
+    .progress-meta { display:flex; justify-content:space-between; gap:12px; font-size:.9rem; color: var(--muted); margin-bottom: 8px; }
+    .progress { width:100%; height:12px; border-radius:999px; background:#e2e8f0; overflow:hidden; }
+    .progress > span { display:block; height:100%; width:0%; background: linear-gradient(90deg, #d946ef, #0ea5e9); border-radius:999px; transition: width .28s ease; }
+    .question-box { background:#f8fafc; border-radius:24px; padding:20px; margin-bottom:18px; }
+    .question-title { font-size:1.25rem; font-weight:800; line-height:1.55; }
+    .option-list { display:grid; gap:12px; }
+    .option { width:100%; text-align:left; padding:16px; border-radius:18px; border:1px solid var(--border); background:white; transition:.18s ease; display:flex; gap:12px; align-items:flex-start; }
+    .option:hover { border-color:#cbd5e1; background:#f8fafc; }
+    .option.selected { border-color: var(--selected-border); background: var(--selected-bg); }
+    .option.correct { border-color: #10b981; background: var(--success-bg); }
+    .option.wrong { border-color: #fb7185; background: var(--danger-bg); }
+    .option-letter { min-width:26px; width:26px; height:26px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; background:#e2e8f0; color:#334155; flex-shrink:0; margin-top:2px; }
+    .option.selected .option-letter { background:#0ea5e9; color:white; }
+    .option.correct .option-letter { background:#10b981; color:white; }
+    .option.wrong .option-letter { background:#f43f5e; color:white; }
+    .feedback { border:1px solid var(--warn-border); background: var(--warn-bg); border-radius:24px; padding:18px; }
+    .feedback.success { border-color: var(--success-border); background: var(--success-bg); }
+    .feedback-title { font-weight:800; margin-bottom:8px; }
+    textarea { width:100%; border:1px solid #cbd5e1; border-radius:18px; padding:14px; min-height:110px; font:inherit; resize:vertical; }
+    textarea:focus { outline:none; border-color:#60a5fa; box-shadow: 0 0 0 3px rgba(96,165,250,.15); }
+    .stack { display:grid; gap:20px; }
+    .steps { display:grid; gap:12px; }
+    .step { background:#f8fafc; border-radius:18px; padding:14px; font-size:.95rem; color:#334155; line-height:1.5; }
+    .stats-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
+    .stat { background:#f8fafc; border-radius:18px; padding:16px; }
+    .stat .n { font-size:1.8rem; font-weight:800; margin-top:4px; }
+    .result-stats { display:grid; gap:16px; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 22px; }
+    .history-list { display:grid; gap:12px; }
+    .history-item { border:1px solid var(--border); border-radius:18px; padding:16px; }
+    .tag { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:6px 10px; font-size:13px; font-weight:700; }
+    .tag.success { background:#ecfdf5; color:#047857; }
+    .tag.fail { background:#fff1f2; color:#be123c; }
+    .gradient-note { color:white; border-radius:20px; padding:18px; background: linear-gradient(90deg, #8b5cf6, #0ea5e9); }
+    .hidden { display:none !important; }
+    .footer-note { margin-top: 16px; font-size: .92rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div>
+        <div class="badge">🎓 Vakdidactiek Coach</div>
+        <h1>Oefen met didactisch redeneren</h1>
+        <p class="lead">Kies een thema en oefen met korte lescasussen. Je krijgt directe feedback, een didactische uitleg en een reflectievraag.</p>
+      </div>
+      <div id="topBadge" class="badge">📚 8 thema’s • 24 casussen</div>
+    </div>
+
+    <section id="homeView" class="grid grid-home"></section>
+
+    <section id="quizView" class="grid grid-main hidden">
+      <div class="card">
+        <div class="card-header">
+          <div style="display:flex; justify-content:space-between; gap:14px; align-items:flex-start; flex-wrap:wrap;">
+            <div>
+              <div id="themaTitel" style="font-size:1.7rem; font-weight:800;"></div>
+              <div id="casusTeller" class="muted small" style="margin-top:6px;"></div>
+            </div>
+            <div style="min-width:200px; flex:1; max-width:260px;">
+              <div class="progress-wrap">
+                <div class="progress"><span id="progressBar"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="question-box">
+            <div id="vraag" class="question-title"></div>
+          </div>
+
+          <div id="opties" class="option-list"></div>
+
+          <div id="feedbackWrap" class="hidden" style="margin-top:18px; display:grid; gap:16px;">
+            <div id="feedbackBox" class="feedback">
+              <div id="feedbackTitel" class="feedback-title"></div>
+              <div id="uitleg" class="small" style="line-height:1.8;"></div>
+            </div>
+
+            <div class="card" style="box-shadow:none; border:1px solid var(--border); background:#f8fafc;">
+              <div class="card-content">
+                <label class="small" style="font-weight:800; display:block; margin-bottom:6px;">Reflectievraag</label>
+                <div id="reflectieVraag" class="small" style="margin-bottom:12px; line-height:1.7;"></div>
+                <textarea id="reflectieInput" placeholder="Typ hier je korte reflectie..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div id="buttonRow" class="button-row"></div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="card-header">
+            <div style="font-size:1.15rem; font-weight:800;">Wat leer je hier?</div>
+            <div class="muted small" style="margin-top:6px;">Elke casus laat je oefenen met didactisch kijken, kiezen en verantwoorden.</div>
+          </div>
+          <div class="card-content steps">
+            <div class="step">1. Lees de lessituatie aandachtig.</div>
+            <div class="step">2. Kies de didactisch sterkste aanpak.</div>
+            <div class="step">3. Vergelijk jouw keuze met de uitleg.</div>
+            <div class="step">4. Reflecteer op wat jij in jouw vak zou doen.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div style="font-size:1.15rem; font-weight:800;">Voortgang</div>
+            <div class="muted small" style="margin-top:6px;">Je huidige sessie in één oogopslag.</div>
+          </div>
+          <div class="card-content">
+            <div class="progress-meta"><span>Afgerond</span><span id="progressPct">0%</span></div>
+            <div class="progress"><span id="progressBarSide"></span></div>
+            <div class="stats-grid" style="margin-top:14px;">
+              <div class="stat">
+                <div class="muted tiny">Goed beantwoord</div>
+                <div id="scoreNow" class="n">0</div>
+              </div>
+              <div class="stat">
+                <div class="muted tiny">Nog te gaan</div>
+                <div id="remainingNow" class="n">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultView" class="grid grid-result hidden">
+      <div class="card">
+        <div class="card-header">
+          <div class="tag success">✔ Thema afgerond</div>
+          <div id="resultTitel" style="font-size:2rem; font-weight:800; margin-top:12px;"></div>
+          <div id="resultLabel" class="muted" style="margin-top:8px;"></div>
+        </div>
+        <div class="card-content">
+          <div class="result-stats">
+            <div class="stat">
+              <div class="muted tiny">Score</div>
+              <div id="resultScore" class="n">0/0</div>
+            </div>
+            <div class="stat">
+              <div class="muted tiny">Beheersing</div>
+              <div id="resultPct" class="n">0%</div>
+            </div>
+            <div class="stat">
+              <div class="muted tiny">Focus</div>
+              <div style="margin-top:8px; font-size:1.1rem; font-weight:800;">Didactisch redeneren</div>
+            </div>
+          </div>
+
+          <div style="font-size:1.1rem; font-weight:800; margin-bottom:12px;">Overzicht van jouw keuzes</div>
+          <div id="historyList" class="history-list"></div>
+
+          <div class="button-row">
+            <button id="retryBtn" class="btn btn-primary">↺ Opnieuw oefenen</button>
+            <button id="backHomeBtn" class="btn btn-secondary">Kies een ander thema</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div style="font-size:1.45rem; font-weight:800;">Docentideeën voor uitbreiding</div>
+          <div class="muted small" style="margin-top:6px;">Deze eerste versie is klaar om verder uit te bouwen voor jouw opleiding.</div>
+        </div>
+        <div class="card-content stack">
+          <div class="step"><strong>1. Voeg een stagekoppeling toe</strong><br />Laat studenten na elke module een voorbeeld uit hun stage of observatiepraktijk noteren.</div>
+          <div class="step"><strong>2. Voeg vakspecifieke routes toe</strong><br />Denk aan Nederlands, rekenen/wiskunde, mens & maatschappij of zaakvakken met eigen casussen.</div>
+          <div class="step"><strong>3. Maak een docentmodus</strong><br />Voeg eigen casussen toe, laat studenten resultaten bespreken en gebruik de reflecties in werkcolleges.</div>
+          <div class="gradient-note"><strong>Volgende stap</strong><br />Bouw hierna een mini-lesontwerper, zodat studenten niet alleen herkennen maar ook zelf didactische keuzes leren maken.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">Tip: dit is een volledig zelfstandig HTML-bestand. Je kunt het lokaal openen of uploaden naar GitHub Pages.</div>
+  </div>
+
+  <script>
+    const themaData = [{"id": "lesdoel", "titel": "Lesdoelen", "kleur": "pink", "intro": "Leer het verschil tussen een activiteit en een leerdoel, en oefen met doelgericht lesgeven.", "cases": [{"vraag": "Een student zegt: ‘Mijn lesdoel is dat leerlingen opdracht 3 t/m 8 maken.’ Wat is de beste feedback?", "opties": ["Prima, want het beschrijft duidelijk wat leerlingen gaan doen.", "Nog niet scherp: dit beschrijft een activiteit, niet wat leerlingen leren.", "Goed, want een lesdoel hoeft niet meetbaar te zijn.", "Alleen bruikbaar als het in de methode staat."], "correctIndex": 1, "uitleg": "Een leerdoel gaat over wat leerlingen aan het einde kennen, begrijpen of kunnen. ‘Opdracht 3 t/m 8 maken’ beschrijft vooral een activiteit.", "reflectie": "Hoe zou jij dit lesdoel herformuleren als zichtbaar leerresultaat?"}, {"vraag": "Welke formulering is het sterkste leerdoel?", "opties": ["Leerlingen luisteren naar uitleg over fotosynthese.", "Leerlingen maken een werkblad over fotosynthese.", "Leerlingen kunnen in eigen woorden uitleggen wat fotosynthese is.", "Leerlingen openen hun boek op bladzijde 42."], "correctIndex": 2, "uitleg": "Een sterk leerdoel beschrijft wat de leerling kan laten zien of uitleggen, niet alleen welke activiteit plaatsvindt.", "reflectie": "Wat maakt een leerdoel volgens jou voor leerlingen ook begrijpelijk?"}, {"vraag": "Je wilt dat leerlingen argumenten leren herkennen in een tekst. Wat past het best bij dat doel?", "opties": ["Vrij lezen zonder opdracht.", "Een kijkwijzer gebruiken om argumenten in een tekst te markeren.", "Een filmpje kijken over het onderwerp.", "Een poster maken over de schrijver."], "correctIndex": 1, "uitleg": "De werkvorm moet direct aansluiten op het leerdoel. Als leerlingen argumenten moeten herkennen, helpt een gerichte analyse-opdracht daar het meest bij.", "reflectie": "Hoe controleer je of leerlingen het leerdoel ook echt beheersen?"}]}, {"id": "lesopbouw", "titel": "Lesopbouw", "kleur": "sky", "intro": "Oefen met logische lesfasen: opening, instructie, verwerking en afsluiting.", "cases": [{"vraag": "Wat is meestal de sterkste start van een les?", "opties": ["Direct zelfstandig laten werken zonder context.", "Beginnen met een duidelijke start: doel, relevantie en focus.", "Eerst administratieve zaken en daarna pas inhoud.", "De leerlingen zelf laten raden wat het onderwerp is zonder sturing."], "correctIndex": 1, "uitleg": "Een sterke lesopening geeft richting: waar gaan we mee aan de slag, waarom is dat relevant en wat wordt er van leerlingen verwacht?", "reflectie": "Hoe maak jij een lesopening inhoudelijk én activerend?"}, {"vraag": "Waarom is een lesafsluiting didactisch belangrijk?", "opties": ["Vooral om de tijd vol te maken tot de bel gaat.", "Omdat je dan kunt checken wat leerlingen geleerd hebben en vooruit kunt blikken.", "Alleen zodat leerlingen hun spullen op tijd kunnen pakken.", "Een afsluiting is minder belangrijk dan de instructie."], "correctIndex": 1, "uitleg": "In een lesafsluiting maak je leren zichtbaar: wat nemen leerlingen mee, wat is nog onduidelijk en wat volgt hierna?", "reflectie": "Welke afsluiter zou jij vaak willen gebruiken: exit ticket, korte check of klassikaal samenvatten? Waarom?"}, {"vraag": "Welke volgorde is didactisch het meest logisch?", "opties": ["Verwerking → opening → evaluatie → instructie", "Opening → instructie → verwerking → evaluatie", "Instructie → verwerking → opening → evaluatie", "Evaluatie → opening → verwerking → instructie"], "correctIndex": 1, "uitleg": "Een logische lesopbouw helpt leerlingen begrijpen waar ze zijn in het leerproces en wat de bedoeling van elke fase is.", "reflectie": "Met welke lesfase heb jij zelf het meeste moeite bij het voorbereiden?"}]}, {"id": "activeren", "titel": "Activerende didactiek", "kleur": "emerald", "intro": "Laat leerlingen denken, meedoen en verbanden leggen in plaats van alleen luisteren.", "cases": [{"vraag": "Je start een les over procenten. Wat is de meest activerende eerste stap?", "opties": ["Meteen tien sommen laten maken.", "Een herkenbare vraag uit het dagelijks leven stellen waarin procenten voorkomen.", "Alle definities eerst laten overschrijven.", "De methode laten voorlezen door een leerling."], "correctIndex": 1, "uitleg": "Door aan te sluiten bij voorkennis en herkenbare contexten activeer je leerlingen en vergroot je betrokkenheid.", "reflectie": "Welke startvraag zou jij in jouw vak gebruiken om voorkennis op te halen?"}, {"vraag": "Welke werkvorm activeert de meeste denkactiviteit?", "opties": ["Twintig minuten alleen luisteren naar uitleg.", "Denk–deel–uitwissel met een inhoudelijke vraag.", "Een lange samenvatting overschrijven.", "Wachten tot één leerling antwoord geeft."], "correctIndex": 1, "uitleg": "Een werkvorm zoals denk–deel–uitwissel zorgt ervoor dat alle leerlingen eerst zelf nadenken en daarna actief verwoorden.", "reflectie": "Wanneer zou jij klassikaal werken verkiezen boven tweetalgesprek?"}, {"vraag": "Wat is een valkuil bij activerende werkvormen?", "opties": ["Dat leerlingen meer taal gebruiken om te denken.", "Dat er activiteit is zonder duidelijke koppeling aan het leerdoel.", "Dat leerlingen samenwerken.", "Dat je korte vragen stelt tijdens de les."], "correctIndex": 1, "uitleg": "Activerend is niet automatisch didactisch sterk. De activiteit moet nog steeds direct bijdragen aan het leerdoel.", "reflectie": "Hoe bewaak jij dat een werkvorm meer is dan ‘leuk bezig zijn’?"}]}, {"id": "feedback", "titel": "Feedback en begripscontrole", "kleur": "amber", "intro": "Oefen met het checken van begrip en het geven van gerichte feedback die leren verder helpt.", "cases": [{"vraag": "Wat is de beste manier om tijdens de les te checken of leerlingen het begrijpen?", "opties": ["Vragen: ‘Snapt iedereen het?’ en doorgaan als niemand reageert.", "Een korte vraag of mini-opdracht geven waarmee alle leerlingen iets laten zien.", "Alleen de snelste leerling laten antwoorden.", "Wachten tot na de toets."], "correctIndex": 1, "uitleg": "Goede begripscontrole maakt denken zichtbaar bij alle leerlingen, niet alleen bij de mondige of snelle leerling.", "reflectie": "Welke snelle check-op-begrip zou jij morgen al kunnen gebruiken?"}, {"vraag": "Welke feedback is het meest leerzaam?", "opties": ["Goed zo!", "Fout.", "Je argument is duidelijk, maar onderbouw het nog met een voorbeeld uit de tekst.", "Je moet beter opletten."], "correctIndex": 2, "uitleg": "Sterke feedback is specifiek, taakgericht en helpt de leerling vooruit met een concrete vervolgstap.", "reflectie": "Hoe kun je feedback geven zonder meteen alles voor te zeggen?"}, {"vraag": "Waarom is een exit ticket didactisch waardevol?", "opties": ["Omdat leerlingen dan stil zijn aan het einde van de les.", "Omdat je snel zicht krijgt op wat leerlingen meenemen en wat nog aandacht vraagt.", "Omdat het minder voorbereiding kost dan een lesdoel.", "Omdat leerlingen dan eerder naar buiten mogen."], "correctIndex": 1, "uitleg": "Een exit ticket maakt zichtbaar wat leerlingen hebben begrepen en geeft jou informatie voor de volgende les.", "reflectie": "Welke ene vraag zou jij op een exit ticket zetten?"}]}, {"id": "differentiatie", "titel": "Differentiatie", "kleur": "violet", "intro": "Oefen met afstemmen op verschillen tussen leerlingen in tempo, niveau en ondersteuning.", "cases": [{"vraag": "Tijdens de verwerking zie je dat een deel van de klas vastloopt, terwijl anderen al klaar zijn. Wat is de sterkste didactische reactie?", "opties": ["Iedereen moet wachten tot de hele klas even ver is.", "Je biedt verlengde instructie aan wie dat nodig heeft en een verdiepende taak aan snelle leerlingen.", "Je herhaalt de hele uitleg woord voor woord voor iedereen.", "Je laat leerlingen zelf uitzoeken wie extra hulp nodig heeft."], "correctIndex": 1, "uitleg": "Differentiatie betekent doelgericht afstemmen. Niet iedereen heeft dezelfde ondersteuning of uitdaging nodig op hetzelfde moment.", "reflectie": "Welke vorm van differentiatie past het best bij jouw vak: in instructie, verwerking of product?"}, {"vraag": "Wat is een goed voorbeeld van differentiatie in instructie?", "opties": ["Iedere leerling krijgt exact dezelfde uitleg en opdracht.", "Je geeft een basisinstructie aan de hele groep en daarna een korte verlengde instructie aan een kleinere groep.", "Je slaat de uitleg over voor sterke leerlingen.", "Je laat alleen de snelste leerlingen antwoorden."], "correctIndex": 1, "uitleg": "Bij differentiatie in instructie houd je rekening met de mate van steun die leerlingen nodig hebben om tot leren te komen.", "reflectie": "Hoe voorkom je dat differentiatie voelt als ‘meer van hetzelfde’ voor leerlingen die extra steun krijgen?"}, {"vraag": "Wat is een valkuil bij differentiatie?", "opties": ["Dat leerlingen verschillende routes volgen naar hetzelfde doel.", "Dat differentiatie losraakt van het leerdoel en alleen nog gaat over bezigheid.", "Dat je leerlingen korte keuzevrijheid geeft.", "Dat je een extra voorbeeld gebruikt."], "correctIndex": 1, "uitleg": "Differentiatie is pas didactisch sterk als de aanpassingen nog steeds gericht zijn op hetzelfde beoogde leren of een duidelijke passende route daarheen.", "reflectie": "Hoe kun jij differentiëren zonder acht aparte lessen tegelijk te geven?"}]}, {"id": "instructie", "titel": "Instructie geven", "kleur": "rose", "intro": "Oefen met helder uitleggen, modelleren en stap voor stap opbouwen van begrip.", "cases": [{"vraag": "Wat maakt een instructie didactisch sterk?", "opties": ["Dat je zoveel mogelijk informatie achter elkaar geeft.", "Dat je uitleg doelgericht, overzichtelijk en in kleine stappen opbouwt.", "Dat je geen voorbeelden gebruikt zodat leerlingen zelf gaan nadenken.", "Dat je vooral vertelt wat leerlingen fout doen."], "correctIndex": 1, "uitleg": "Heldere instructie vraagt om structuur, focus op kernpunten en een tempo waarin leerlingen kunnen volgen.", "reflectie": "Welke stap vergeet jij zelf nog weleens bij het geven van uitleg?"}, {"vraag": "Wanneer is modelleren een sterke keuze?", "opties": ["Als leerlingen een denkproces of aanpak nog niet zelfstandig kunnen overzien.", "Alleen aan het einde van de les.", "Vooral als je tijd wilt winnen.", "Alleen bij praktische vakken."], "correctIndex": 0, "uitleg": "Bij modelleren maak je zichtbaar hoe je denkt en handelt. Daardoor wordt een onzichtbaar denkproces concreet voor leerlingen.", "reflectie": "In welk onderdeel van jouw vak zou hardop denken veel opleveren voor studenten of leerlingen?"}, {"vraag": "Welke keuze ondersteunt begrip tijdens instructie het best?", "opties": ["Veel vaktaal gebruiken zonder toelichting.", "Een voorbeeld geven, tussendoor vragen stellen en kernpunten samenvatten.", "De uitleg alleen voorlezen vanaf de slides.", "Zo snel mogelijk door de stof heen gaan."], "correctIndex": 1, "uitleg": "Goede instructie combineert uitleg met voorbeelden en tussentijdse checks, zodat leerlingen kunnen aanhaken en betekenis opbouwen.", "reflectie": "Hoe zorg jij dat jouw uitleg niet alleen duidelijk klinkt, maar ook echt landt?"}]}, {"id": "klassenmanagement", "titel": "Klassenmanagement", "kleur": "slate", "intro": "Oefen met routines, aandacht sturen en een leergerichte werksfeer creëren.", "cases": [{"vraag": "Wat helpt het meest om een les rustig en doelgericht te starten?", "opties": ["Improviseren en per keer kijken wat nodig is.", "Vaste routines gebruiken voor binnenkomst, starttaak en aandacht.", "Pas reageren als het onrustig wordt.", "Leerlingen zelf laten bepalen wanneer de les begint."], "correctIndex": 1, "uitleg": "Duidelijke routines verminderen ruis en geven leerlingen voorspelbaarheid. Daardoor ontstaat sneller ruimte voor leren.", "reflectie": "Welke start- of overgangsroutine zou jij in jouw lessen willen invoeren?"}, {"vraag": "Tijdens je uitleg praten enkele leerlingen door elkaar heen. Wat is didactisch het sterkst?", "opties": ["Doorgaan met uitleggen totdat het vanzelf stil wordt.", "Kort, duidelijk en rustig de aandacht terughalen met een afgesproken signaal of interventie.", "Alleen de luidste leerling streng aanspreken.", "De uitleg helemaal stoppen en vrije tijd geven."], "correctIndex": 1, "uitleg": "Effectief klassenmanagement is voorspelbaar, rustig en gericht op herstel van de leerfocus, niet op escalatie.", "reflectie": "Hoe wil jij reageren op onrust zonder dat het de hele les overneemt?"}, {"vraag": "Wat is een sterke overgang van instructie naar zelfstandig werken?", "opties": ["Zeggen: ‘Ga maar beginnen’ zonder verdere check.", "Kort de opdracht, tijd en succescriteria herhalen en dan starten.", "Iedereen direct aan het werk zetten zonder vragen toe te staan.", "De snelste leerling laten uitleggen wat de rest moet doen."], "correctIndex": 1, "uitleg": "Heldere overgangen voorkomen onduidelijkheid en helpen leerlingen zelfstandig en taakgericht aan de slag te gaan.", "reflectie": "Welke drie dingen wil jij altijd benoemen voordat leerlingen zelfstandig werken?"}]}, {"id": "evalueren", "titel": "Evalueren en reflecteren", "kleur": "lime", "intro": "Oefen met terugkijken op leren, opbrengsten zichtbaar maken en vervolgstappen bepalen.", "cases": [{"vraag": "Wat is het belangrijkste doel van evalueren tijdens of na een les?", "opties": ["Kijken wie het snelst werkt.", "Zicht krijgen op wat leerlingen geleerd hebben en wat de volgende stap is.", "Alleen bepalen welk cijfer iemand krijgt.", "Tijd opvullen aan het einde van de les."], "correctIndex": 1, "uitleg": "Didactisch evalueren helpt om het leren zichtbaar te maken en vervolgkeuzes te onderbouwen voor docent en leerling.", "reflectie": "Hoe maak jij in jouw lessen het verschil zichtbaar tussen afronden en echt evalueren?"}, {"vraag": "Welke vraag past het best bij een reflectieve lesafsluiting?", "opties": ["Wie was het snelst klaar?", "Wat heb je vandaag geleerd en wat vind je nog lastig?", "Was dit een leuke les?", "Heb je je boek opgeruimd?"], "correctIndex": 1, "uitleg": "Een reflectieve vraag richt zich op inzicht in het leerproces en helpt leerlingen hun eigen begrip te verwoorden.", "reflectie": "Welke reflectievraag zou jij vaak willen inzetten bij eerstejaars?"}, {"vraag": "Wat doe je met de uitkomsten van een evaluatie?", "opties": ["Niets, want evaluatie is alleen een afronding.", "Je gebruikt ze om je volgende instructie, verwerking of ondersteuning aan te passen.", "Je bewaart ze alleen voor het eind van het jaar.", "Je bespreekt ze alleen met de sterkste leerlingen."], "correctIndex": 1, "uitleg": "Evaluatie krijgt pas didactische waarde als de opbrengst leidt tot een vervolgstap in onderwijs of leren.", "reflectie": "Hoe zou jij jouw volgende les aanpassen op basis van een exit ticket of korte check?"}]}];
+
+    const state = {
+      selectedThemaId: null,
+      currentIndex: 0,
+      selectedOption: null,
+      showFeedback: false,
+      score: 0,
+      reflection: "",
+      sessionDone: false,
+      history: []
+    };
+
+    const homeView = document.getElementById('homeView');
+    const quizView = document.getElementById('quizView');
+    const resultView = document.getElementById('resultView');
+    const topBadge = document.getElementById('topBadge');
+
+    function totalCaseCount() {
+      return themaData.reduce((t, thema) => t + thema.cases.length, 0);
+    }
+
+    function getSelectedThema() {
+      return themaData.find(t => t.id === state.selectedThemaId) || null;
+    }
+
+    function getCurrentCase() {
+      const thema = getSelectedThema();
+      return thema?.cases?.[state.currentIndex] || null;
+    }
+
+    function getProgress() {
+      const thema = getSelectedThema();
+      const totalCases = thema?.cases?.length || 0;
+      if (!totalCases) return 0;
+      return ((state.currentIndex + ((state.showFeedback || state.sessionDone) ? 1 : 0)) / totalCases) * 100;
+    }
+
+    function getResultLabel(score, total) {
+      if (!total) return "";
+      const ratio = score / total;
+      if (ratio === 1) return "Uitstekend — je redeneert al heel doelgericht.";
+      if (ratio >= 0.66) return "Sterk — je hebt de basis goed in beeld.";
+      if (ratio >= 0.34) return "Goede start — met nog wat oefening wordt dit snel steviger.";
+      return "Mooi begin — juist door te oefenen groeit je didactische blik.";
+    }
+
+    function resetStateForTheme(themaId) {
+      state.selectedThemaId = themaId;
+      state.currentIndex = 0;
+      state.selectedOption = null;
+      state.showFeedback = false;
+      state.score = 0;
+      state.reflection = "";
+      state.sessionDone = false;
+      state.history = [];
+    }
+
+    function goHome() {
+      state.selectedThemaId = null;
+      state.currentIndex = 0;
+      state.selectedOption = null;
+      state.showFeedback = false;
+      state.score = 0;
+      state.reflection = "";
+      state.sessionDone = false;
+      state.history = [];
+      render();
+    }
+
+    function checkAnswer() {
+      const current = getCurrentCase();
+      if (state.selectedOption === null || !current) return;
+      const isCorrect = state.selectedOption === current.correctIndex;
+      if (isCorrect) state.score += 1;
+      state.history.push({
+        vraag: current.vraag,
+        gekozen: current.opties[state.selectedOption],
+        correct: current.opties[current.correctIndex],
+        isCorrect
+      });
+      state.showFeedback = true;
+      render();
+    }
+
+    function nextCase() {
+      const thema = getSelectedThema();
+      if (!thema) return;
+      if (state.currentIndex < thema.cases.length - 1) {
+        state.currentIndex += 1;
+        state.selectedOption = null;
+        state.showFeedback = false;
+        state.reflection = "";
+      } else {
+        state.sessionDone = true;
+      }
+      render();
+    }
+
+    function resetSession() {
+      if (!state.selectedThemaId) return;
+      resetStateForTheme(state.selectedThemaId);
+      render();
+    }
+
+    function renderHome() {
+      homeView.innerHTML = '';
+      themaData.forEach(thema => {
+        const card = document.createElement('div');
+        card.className = 'card theme-card';
+        card.innerHTML = `
+          <div class="card-header">
+            <div class="icon-box" style="background: var(--${thema.kleur});">📘</div>
+            <div class="title">${thema.titel}</div>
+            <div class="muted small" style="line-height:1.65;">${thema.intro}</div>
+          </div>
+          <div class="card-content">
+            <div class="pill muted small" style="margin-bottom:16px;">${thema.cases.length} oefencasussen</div>
+            <button class="btn btn-primary" style="width:100%;">Start thema →</button>
+          </div>
+        `;
+        card.querySelector('button').addEventListener('click', () => {
+          resetStateForTheme(thema.id);
+          render();
+        });
+        homeView.appendChild(card);
+      });
+    }
+
+    function renderQuiz() {
+      const thema = getSelectedThema();
+      const current = getCurrentCase();
+      if (!thema || !current) return;
+      const totalCases = thema.cases.length;
+      const progress = getProgress();
+
+      document.getElementById('themaTitel').textContent = thema.titel;
+      document.getElementById('casusTeller').textContent = `Casus ${state.currentIndex + 1} van ${totalCases}`;
+      document.getElementById('vraag').textContent = current.vraag;
+      document.getElementById('progressBar').style.width = `${progress}%`;
+      document.getElementById('progressBarSide').style.width = `${progress}%`;
+      document.getElementById('progressPct').textContent = `${Math.round(progress)}%`;
+      document.getElementById('scoreNow').textContent = state.score;
+      document.getElementById('remainingNow').textContent = Math.max(totalCases - (state.currentIndex + (state.showFeedback ? 1 : 0)), 0);
+
+      topBadge.innerHTML = state.sessionDone ? `📚 8 thema’s • ${totalCaseCount()} casussen` : `✨ Score: ${state.score} / ${totalCases}`;
+
+      const optiesEl = document.getElementById('opties');
+      optiesEl.innerHTML = '';
+      current.opties.forEach((optie, index) => {
+        const btn = document.createElement('button');
+        const isSelected = state.selectedOption === index;
+        const isCorrect = state.showFeedback && index === current.correctIndex;
+        const isWrong = state.showFeedback && isSelected && index !== current.correctIndex;
+        btn.className = `option${isSelected ? ' selected' : ''}${isCorrect ? ' correct' : ''}${isWrong ? ' wrong' : ''}`;
+        btn.innerHTML = `<div class="option-letter">${String.fromCharCode(65 + index)}</div><div style="line-height:1.65;">${optie}</div>`;
+        btn.disabled = state.showFeedback;
+        btn.addEventListener('click', () => {
+          if (state.showFeedback) return;
+          state.selectedOption = index;
+          renderQuiz();
+        });
+        optiesEl.appendChild(btn);
+      });
+
+      const feedbackWrap = document.getElementById('feedbackWrap');
+      const feedbackBox = document.getElementById('feedbackBox');
+      const feedbackTitel = document.getElementById('feedbackTitel');
+      const uitleg = document.getElementById('uitleg');
+      const reflectieVraag = document.getElementById('reflectieVraag');
+      const reflectieInput = document.getElementById('reflectieInput');
+
+      if (state.showFeedback) {
+        feedbackWrap.classList.remove('hidden');
+        const success = state.selectedOption === current.correctIndex;
+        feedbackBox.className = `feedback${success ? ' success' : ''}`;
+        feedbackTitel.textContent = success ? 'Sterke keuze' : 'Leer van deze keuze';
+        uitleg.textContent = current.uitleg;
+        reflectieVraag.textContent = current.reflectie;
+        reflectieInput.value = state.reflection || '';
+      } else {
+        feedbackWrap.classList.add('hidden');
+      }
+
+      reflectieInput.oninput = (e) => state.reflection = e.target.value;
+
+      const buttonRow = document.getElementById('buttonRow');
+      buttonRow.innerHTML = '';
+      if (!state.showFeedback) {
+        const checkBtn = document.createElement('button');
+        checkBtn.className = 'btn btn-primary';
+        checkBtn.textContent = 'Check antwoord';
+        checkBtn.disabled = state.selectedOption === null;
+        checkBtn.addEventListener('click', checkAnswer);
+        const backBtn = document.createElement('button');
+        backBtn.className = 'btn btn-secondary';
+        backBtn.textContent = "Terug naar thema's";
+        backBtn.addEventListener('click', goHome);
+        buttonRow.append(checkBtn, backBtn);
+      } else {
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn btn-primary';
+        nextBtn.textContent = state.currentIndex === totalCases - 1 ? 'Bekijk resultaat →' : 'Volgende casus →';
+        nextBtn.addEventListener('click', nextCase);
+        const resetBtn = document.createElement('button');
+        resetBtn.className = 'btn btn-secondary';
+        resetBtn.textContent = '↺ Opnieuw';
+        resetBtn.addEventListener('click', resetSession);
+        buttonRow.append(nextBtn, resetBtn);
+      }
+    }
+
+    function renderResult() {
+      const thema = getSelectedThema();
+      if (!thema) return;
+      const total = thema.cases.length;
+      const pct = Math.round((state.score / total) * 100);
+      document.getElementById('resultTitel').textContent = thema.titel;
+      document.getElementById('resultLabel').textContent = getResultLabel(state.score, total);
+      document.getElementById('resultScore').textContent = `${state.score}/${total}`;
+      document.getElementById('resultPct').textContent = `${pct}%`;
+      topBadge.innerHTML = `📚 8 thema’s • ${totalCaseCount()} casussen`;
+
+      const historyList = document.getElementById('historyList');
+      historyList.innerHTML = '';
+      state.history.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML = `
+          <div class="${item.isCorrect ? 'tag success' : 'tag fail'}">${item.isCorrect ? '✔ Correct' : '✖ Nog oefenen'}</div>
+          <div style="font-weight:700; margin-top:10px; line-height:1.6;">${item.vraag}</div>
+          <div class="small muted" style="margin-top:8px;"><strong style="color:#334155;">Jouw keuze:</strong> ${item.gekozen}</div>
+          ${!item.isCorrect ? `<div class="small muted" style="margin-top:6px;"><strong style="color:#334155;">Sterkste keuze:</strong> ${item.correct}</div>` : ''}
+        `;
+        historyList.appendChild(div);
+      });
+
+      document.getElementById('retryBtn').onclick = resetSession;
+      document.getElementById('backHomeBtn').onclick = goHome;
+    }
+
+    function render() {
+      const hasThema = !!state.selectedThemaId;
+      homeView.classList.toggle('hidden', hasThema);
+      quizView.classList.toggle('hidden', !hasThema || state.sessionDone);
+      resultView.classList.toggle('hidden', !hasThema || !state.sessionDone);
+
+      if (!hasThema) {
+        topBadge.innerHTML = `📚 8 thema’s • ${totalCaseCount()} casussen`;
+        renderHome();
+        return;
+      }
+
+      if (state.sessionDone) {
+        renderResult();
+      } else {
+        renderQuiz();
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
